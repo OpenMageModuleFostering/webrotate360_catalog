@@ -41,7 +41,7 @@
             </action>
             <action method="addItem">
                 <type>skin_js</type>
-                <name>prettyPhoto/js/jquery.prettyPhoto.js</name>
+                <name>prettyPhoto/js/jquery.prettyphoto.js</name>
             </action>
             <block type="page/html" name="webrotateadhoc" output="toHtml">
                 <action method="setTemplate" ifconfig="wr360_product_view/adhoc/use_adhoc">
