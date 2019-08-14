@@ -1,0 +1,16 @@
+{
+    "name": "OpenMageModuleFostering/WebRotate360_Catalog",
+    "type": "magento-module",
+    "license": "WebRotate-360-Product-Viewer-Free-Edition",
+    "homepage": "",
+    "description": "WebRotate 360 Product Viewer Integration for Magento.",
+    "authors": [
+    {
+        "name": "Mahor",
+        "email": "support@webrotate360.com"
+    }
+],
+    "suggest": {
+        "magento-hackathon/magento-composer-installer": "*"
+    }
+}
