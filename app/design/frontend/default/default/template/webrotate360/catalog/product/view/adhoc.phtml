@@ -1,23 +1,29 @@
 <?php
-    if (!empty($GLOBALS["WR360_ADHOC_SET"]))
+
+    $isAdHocSet = Mage::registry('WR360_ADHOC_SET');
+    if (!empty($isAdHocSet))
         return;
 
-    $GLOBALS["WR360_ADHOC_SET"] = true;
+    Mage::register("WR360_ADHOC_SET", 1);
+
     $_product = Mage::registry('current_product');
     if (!$_product)
         return;
 
-    $_rootPathMode  = false;
-    $_360ViewWidth  = Mage::getStoreConfig('wr360_product_view/settings/popup_width');
-    $_360ViewHeight = Mage::getStoreConfig('wr360_product_view/settings/popup_height');
-    $_licensePath   = Mage::getStoreConfig('wr360_product_view/settings/license');
-    $_360root       = $_product->getData('webrotate_root');
-    $_360path       = $_product->getData('webrotate_path');
-    $_graphicsPath  = Mage::getDesign()->getSkinUrl().'webrotate360/imagerotator/html/img/basic';
-    $_placeholder   = Mage::getStoreConfig('wr360_product_view/adhoc/placeholder');
-    $_embedded      = Mage::getStoreConfig('wr360_product_view/adhoc/embedded');
-    $_prettyTheme   = Mage::getStoreConfig('wr360_product_view/settings/pretty_theme');
-    $_360icon       = Mage::getStoreConfig('wr360_product_view/settings/popup_icon');
+    $_rootPathMode    = false;
+    $_fullScreenClick = false;
+    $_360ViewWidth    = str_ireplace("px", "", Mage::getStoreConfig('wr360_product_view/settings/popup_width'));
+    $_360ViewHeight   = str_ireplace("px", "", Mage::getStoreConfig('wr360_product_view/settings/popup_height'));
+    $_360BaseWidth    = str_ireplace("px", "", Mage::getStoreConfig('wr360_product_view/settings/base_width'));
+    $_licensePath     = Mage::getStoreConfig('wr360_product_view/settings/license');
+    $_360root         = $_product->getData('webrotate_root');
+    $_360path         = $_product->getData('webrotate_path');
+    $_viewerSkin      = Mage::getStoreConfig('wr360_product_view/settings/viewer_skin');
+    $_graphicsPath    = Mage::getBaseUrl(Mage_Core_Model_Store::URL_TYPE_SKIN) . 'frontend/base/default/webrotate360/imagerotator/html/img/' . $_viewerSkin;
+    $_placeholder     = Mage::getStoreConfig('wr360_product_view/adhoc/placeholder');
+    $_embedded        = Mage::getStoreConfig('wr360_product_view/adhoc/embedded');
+    $_prettyTheme     = Mage::getStoreConfig('wr360_product_view/settings/pretty_theme');
+    $_360icon         = Mage::getStoreConfig('wr360_product_view/settings/popup_icon');
 
     if (empty($_360path))
     {
@@ -35,9 +41,14 @@
     {
         $_360icon = $this->getSkinUrl('webrotate360/360thumb.png');
     }
+
+    if (empty($_360BaseWidth))
+    {
+        $_360BaseWidth = 0;
+    }
 ?>
-<?if ($_360IsSet): ?>
-    <?if ($_embedded):?>
+<?php if ($_360IsSet): ?>
+    <?php if ($_embedded):?>
         <style type="text/css">
             <?php echo $_placeholder?>{visibility: hidden;}
             .zoom-notice{display: none !important;}
@@ -49,13 +60,14 @@
                     "<?php echo $_placeholder?>",
                     "<?php echo $_360ViewWidth?>",
                     "<?php echo $_360ViewHeight?>",
+                    "<?php echo $_360BaseWidth?>",
                     "<?php echo $_graphicsPath?>",
                     "<?php echo $_360path?>",
                     "<?php echo $_360root?>",
                     "<?php echo $_licensePath?>");
             });
         </script>
-    <?else:?>
+    <?php else:?>
         <style type="text/css">
             <?php echo $_placeholder?>{visibility: hidden;}
         </style>
@@ -63,20 +75,32 @@
             <?php $_360ViewWidth  = preg_replace("/[^0-9]/","",$_360ViewWidth) ?>
             <?php $_360ViewHeight = preg_replace("/[^0-9]/","",$_360ViewHeight) ?>
 
-            jQuery(document).ready(function(){
-                WR360AdhocPopupInitialize(
-                    "<?php echo $_placeholder?>",
-                    "<?php echo $this->getSkinUrl('webrotate360/frame.html').'?iframe=true&width='.$_360ViewWidth.'&height='.$_360ViewHeight ?>",
-                    "<?php echo $_360icon ?>",
-                    "<?php echo $_prettyTheme?>");
-            });
+            <?php if ($_fullScreenClick == false):?>
+                jQuery(document).ready(function(){
+                    WR360AdhocPopupInitialize(
+                        "<?php echo $_placeholder?>",
+                        "<?php echo $this->getSkinUrl('webrotate360/frame_' . $_viewerSkin . '.html').'?iframe=true&width='.$_360ViewWidth.'&height='.$_360ViewHeight ?>",
+                        "<?php echo $_360icon ?>",
+                        "<?php echo $_prettyTheme?>");
+                });
 
-            WR360IFrameParams = function(){
-                this.configFileURL = "<?php echo $_360path ?>";
-                this.rootPath = "<?php echo $_360root ?>";
-                this.licensePath = "<?php echo $_licensePath ?>";
-                this.graphicsPath = "<?php echo $_graphicsPath ?>";
-            }
+                WR360IFrameParams = function(){
+                    this.configFileURL = "<?php echo $_360path ?>";
+                    this.rootPath = "<?php echo $_360root ?>";
+                    this.licensePath = "<?php echo $_licensePath ?>";
+                    this.graphicsPath = "<?php echo $_graphicsPath ?>";
+                }
+            <?php else:?>
+                jQuery(document).ready(function(){
+                    WR360AdhocFullScreenClickInitialize(
+                        "<?php echo $_placeholder?>",
+                        "<?php echo $_360icon ?>",
+                        "<?php echo $_graphicsPath?>",
+                        "<?php echo $_360path?>",
+                        "<?php echo $_360root?>",
+                        "<?php echo $_licensePath?>");
+                });
+            <?php endif?>
         </script>
-    <?endif?>
-<?endif?>
+    <?php endif?>
+<?php endif?>
