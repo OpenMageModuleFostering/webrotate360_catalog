@@ -21,7 +21,7 @@
 <config>
    <modules>
         <WebRotate360_Catalog>
-            <version>3.5.3</version>
+            <version>3.5.5</version>
         </WebRotate360_Catalog>
    </modules>
    <global>
@@ -92,8 +92,10 @@
             </adhoc>
             <settings>
                 <include_jquery>1</include_jquery>
-                <popup_width>280</popup_width>
+                <popup_width>267</popup_width>
                 <popup_height>280</popup_height>
+                <base_width></base_width>
+                <viewer_skin>basic</viewer_skin>
                 <pretty_theme>default</pretty_theme>
                 <popup_icon></popup_icon>
                 <master_config></master_config>

@@ -8,12 +8,14 @@
         return;
 
     $_rootPathMode  = false;
-    $_360ViewWidth  = Mage::getStoreConfig('wr360_product_view/settings/popup_width');
-    $_360ViewHeight = Mage::getStoreConfig('wr360_product_view/settings/popup_height');
+    $_360ViewWidth  = str_ireplace("px", "", Mage::getStoreConfig('wr360_product_view/settings/popup_width'));
+    $_360ViewHeight = str_ireplace("px", "", Mage::getStoreConfig('wr360_product_view/settings/popup_height'));
+    $_360BaseWidth  = str_ireplace("px", "", Mage::getStoreConfig('wr360_product_view/settings/base_width'));
     $_licensePath   = Mage::getStoreConfig('wr360_product_view/settings/license');
     $_360root       = $_product->getData('webrotate_root');
     $_360path       = $_product->getData('webrotate_path');
-    $_graphicsPath  = Mage::getDesign()->getSkinUrl().'webrotate360/imagerotator/html/img/basic';
+    $_viewerSkin    = Mage::getStoreConfig('wr360_product_view/settings/viewer_skin');
+    $_graphicsPath  = Mage::getBaseUrl(Mage_Core_Model_Store::URL_TYPE_SKIN) . 'frontend/base/default/webrotate360/imagerotator/html/img/' . $_viewerSkin;
     $_placeholder   = Mage::getStoreConfig('wr360_product_view/adhoc/placeholder');
     $_embedded      = Mage::getStoreConfig('wr360_product_view/adhoc/embedded');
     $_prettyTheme   = Mage::getStoreConfig('wr360_product_view/settings/pretty_theme');
@@ -35,9 +37,14 @@
     {
         $_360icon = $this->getSkinUrl('webrotate360/360thumb.png');
     }
+
+    if (empty($_360BaseWidth))
+    {
+        $_360BaseWidth = 0;
+    }
 ?>
-<?if ($_360IsSet): ?>
-    <?if ($_embedded):?>
+<?php if ($_360IsSet): ?>
+    <?php if ($_embedded):?>
         <style type="text/css">
             <?php echo $_placeholder?>{visibility: hidden;}
             .zoom-notice{display: none !important;}
@@ -49,13 +56,14 @@
                     "<?php echo $_placeholder?>",
                     "<?php echo $_360ViewWidth?>",
                     "<?php echo $_360ViewHeight?>",
+                    "<?php echo $_360BaseWidth?>",
                     "<?php echo $_graphicsPath?>",
                     "<?php echo $_360path?>",
                     "<?php echo $_360root?>",
                     "<?php echo $_licensePath?>");
             });
         </script>
-    <?else:?>
+    <?php else:?>
         <style type="text/css">
             <?php echo $_placeholder?>{visibility: hidden;}
         </style>
@@ -66,7 +74,7 @@
             jQuery(document).ready(function(){
                 WR360AdhocPopupInitialize(
                     "<?php echo $_placeholder?>",
-                    "<?php echo $this->getSkinUrl('webrotate360/frame.html').'?iframe=true&width='.$_360ViewWidth.'&height='.$_360ViewHeight ?>",
+                    "<?php echo $this->getSkinUrl('webrotate360/frame_' . $_viewerSkin . '.html').'?iframe=true&width='.$_360ViewWidth.'&height='.$_360ViewHeight ?>",
                     "<?php echo $_360icon ?>",
                     "<?php echo $_prettyTheme?>");
             });
@@ -78,5 +86,5 @@
                 this.graphicsPath = "<?php echo $_graphicsPath ?>";
             }
         </script>
-    <?endif?>
-<?endif?>
+    <?php endif?>
+<?php endif?>
