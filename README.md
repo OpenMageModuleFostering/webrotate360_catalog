@@ -1,3 +1,5 @@
+
+
 ## Original Package Description
 
 WebRotate 360 Product Viewer Integration for Magento.
